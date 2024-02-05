@@ -6,58 +6,34 @@
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:22:10 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/02 16:54:38 by sonouelg         ###   ########.fr       */
+/*   Updated: 2024/02/05 11:56:58 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-/*void handler(int signum, siginfo_t *info, void *content) 
-{
-	pid_t pid;
-	(void)content;
-	pid = info->si_pid;
-	int	i;
-	i = 0;
-	while (i < 8)
-	{
-		if (signum == SIGUSR1)
-		{
-			printf("reception signal OK.\n");
-			sleep(1);
-			kill(pid, SIGUSR1);
-		}
-		i++;
-	}
-	sleep(1);
-	kill(pid, SIGUSR2);
-	exit(EXIT_SUCCESS);
-}*/
-
 void receiptmsg(int signum, siginfo_t *info, void *content) 
 {
 	(void)content;
-	int	nbite;
-	static unsigned char c;
-	nbite = 0;
-	while (nbite < 7)
-	{
-		if (signum == SIGUSR1)
+	static char c = 0;
+	static int nbite = 0;
+	if (signum == SIGUSR1)
 		{
 			c = (c << 1) | 1;
 		}
-		else if (signum == SIGUSR2)
-			c = c << 1;		
-		printf("reception octet OK.\n");
-		usleep(500);
-		kill(info->si_pid, SIGUSR1);
-		nbite++;
+		else
+			c = c << 1;
+	printf("reception octet OK.\n");
+//	printf("chart=%d\n", c);
+	usleep(500);
+	nbite++;
+	kill(info->si_pid, SIGUSR2);	
+	if (nbite == 8)
+	{
+		printf("%c\n", c);
+		c = 0;
+		nbite = 0;
 	}
-	printf("char=%c\n", c);
-	//kill(info->si_pid, SIGUSR1);
-	//sleep(1);
-	//kill(info->si_pid, SIGUSR2);
-	exit(EXIT_SUCCESS);
 }
 
 void	config_signal(void)
@@ -71,9 +47,6 @@ void	config_signal(void)
 	if (sigaction(SIGUSR2, &sa_sig, NULL) == -1)
 		printf("error_reception_SIGUSR2");
 }
-
-
-
 
 int main(void) 
 {

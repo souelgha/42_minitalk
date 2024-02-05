@@ -6,7 +6,7 @@
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:22:10 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/02 16:55:41 by sonouelg         ###   ########.fr       */
+/*   Updated: 2024/02/05 11:51:27 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	check_arg(int argc, char **argv)
 	{
 		if (argv[1][i] < '0' || argv[1][i] > '9') // ft_isdigit
 		{
-			printf("ERROR lors de l saisie du <PID>");
+			printf("ERROR lors de la saisie du <PID>");
 			return;
 		}
 		i++;
@@ -37,7 +37,7 @@ void	check_arg(int argc, char **argv)
 		return;
 	}
 }
-void	sendmsg(char *str, pid_t pid) // conversion ok
+void	sendmsg(char *str, pid_t pid)
 {
 	unsigned char n;
 	int i;
@@ -52,31 +52,28 @@ void	sendmsg(char *str, pid_t pid) // conversion ok
 		{
 			if ((n >> nbite) & 1)
 			{
-				printf("1\t");
 				kill(pid, SIGUSR1);
 			}
 			else
 			{
-				printf("0\t");
 				kill(pid, SIGUSR2);
 			}
-			usleep(30);
+			usleep(500);
+		//	printf("nbite=%d\n", nbite);
 			nbite--;
 		}
-		printf("\n");
-		usleep(30);
+		usleep(250);
 		i++;
 	}
 }
 void handle(int signum)
 {
-	static int received;
+	static int received = 0;
 
-	received = 0;
-	if (signum == SIGUSR1) 
+	if (signum == SIGUSR2) 
 	{
-        printf("octet recu !\n");
-		received++;
+        received++;
+		printf("%d octets recus !\n", received);
 		usleep(100);
     }
 	
