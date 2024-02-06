@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   emetteur_client.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sonia <sonia@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:22:10 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/05 16:21:30 by sonouelg         ###   ########.fr       */
+/*   Updated: 2024/02/06 18:45:23 by sonia            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	check_arg(int argc, char **argv)
 
 void	sendmsg(char *str, pid_t pid)
 {
-	unsigned char n;
+	 char n;
 	int i;
 	int nbite;
 
@@ -54,19 +54,22 @@ void	sendmsg(char *str, pid_t pid)
 		while(nbite >= 0)
 		{
 			if ((n >> nbite) & 1)
-			{
 				kill(pid, SIGUSR1);
-			}
 			else
-			{
 				kill(pid, SIGUSR2);
-			}
-			usleep(250);
+			usleep(700);
 			nbite--;
 		}
-		usleep(250);
+		usleep(700);
 		i++;
 	}
+	nbite = 8;
+	while (nbite--)
+	{
+		kill(pid, SIGUSR2);
+		usleep(700);
+	}
+	
 }
 
 void handle(int signum, siginfo_t *info, void *content)
@@ -76,10 +79,13 @@ void handle(int signum, siginfo_t *info, void *content)
 	static int received = 0;
 
 	if (signum == SIGUSR2) 
+        ++received;
+	else
 	{
-        received++;
-		printf("<%d>\n", received);
-    }
+		printf("re=%d\n", received);
+		exit(0);
+	}
+	
 	
 }
 
@@ -89,6 +95,8 @@ void	config_signal(void)
 	sigemptyset(&sa_sig.sa_mask);
 	sa_sig.sa_sigaction = &handle;
 	sa_sig.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sa_sig, NULL);
+	sigaction(SIGUSR2, &sa_sig, NULL);
 	if (sigaction(SIGUSR1, &sa_sig, NULL) == -1)
 		printf("error_reception_SIGUSR1");
 	if (sigaction(SIGUSR2, &sa_sig, NULL) == -1)
@@ -102,11 +110,12 @@ int main(int argc, char **argv)
 		return(1);
 	pid = atoi(argv[1]);
 	config_signal();
+	printf("len=%ld\n", strlen(argv[2]));
 	sendmsg(argv[2], pid);
 	while(1)
 	{
 		pause();
 	}
- 	exit(EXIT_SUCCESS);
+	
 	return 0;
 }
