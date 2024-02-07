@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   emetteur_client.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sonia <sonia@student.42.fr>                +#+  +:+       +#+        */
+/*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 11:22:10 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/06 18:45:23 by sonia            ###   ########.fr       */
+/*   Updated: 2024/02/07 11:32:11 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
+int flag ;
 int	check_arg(int argc, char **argv)
 {
 	int	i;
@@ -40,82 +41,32 @@ int	check_arg(int argc, char **argv)
 	return (0);
 }
 
-void	sendmsg(char *str, pid_t pid)
-{
-	 char n;
-	int i;
-	int nbite;
-
-	i = 0;
-	while (str[i])
-	{
-		n = str[i];
-		nbite = 7;
-		while(nbite >= 0)
-		{
-			if ((n >> nbite) & 1)
-				kill(pid, SIGUSR1);
-			else
-				kill(pid, SIGUSR2);
-			usleep(700);
-			nbite--;
-		}
-		usleep(700);
-		i++;
-	}
-	nbite = 8;
-	while (nbite--)
-	{
-		kill(pid, SIGUSR2);
-		usleep(700);
-	}
-	
-}
-
 void handle(int signum, siginfo_t *info, void *content)
 {
 	(void)content;
 	(void)info;
-	static int received = 0;
-
-	if (signum == SIGUSR2) 
-        ++received;
-	else
-	{
-		printf("re=%d\n", received);
-		exit(0);
-	}
-	
+	static int received = 0;	
+	flag = 1;
+	if (signum == SIGUSR2) //recu on recupere 2
+		received++;
+	else if (signum == SIGUSR1)
+		printf("bites =%d\n", received); // fin on recupere 1
 	
 }
 
-void	config_signal(void)
+int main(int argc, char **argv)
 {
-	struct sigaction sa_sig;
+	
+	pid_t pid;
+	struct sigaction sa_sig;  
 	sigemptyset(&sa_sig.sa_mask);
-	sa_sig.sa_sigaction = &handle;
 	sa_sig.sa_flags = SA_SIGINFO;
+	sa_sig.sa_sigaction = &handler;
 	sigaction(SIGUSR1, &sa_sig, NULL);
 	sigaction(SIGUSR2, &sa_sig, NULL);
-	if (sigaction(SIGUSR1, &sa_sig, NULL) == -1)
-		printf("error_reception_SIGUSR1");
-	if (sigaction(SIGUSR2, &sa_sig, NULL) == -1)
-		printf("error_reception_SIGUSR2");
-}
-
-int main(int argc, char **argv) 
-{
-	pid_t pid;
-	if (check_arg(argc, argv))
-		return(1);
-	pid = atoi(argv[1]);
-	config_signal();
-	printf("len=%ld\n", strlen(argv[2]));
-	sendmsg(argv[2], pid);
-	while(1)
-	{
-		pause();
-	}
 	
-	return 0;
+	flag = 0;
+	if(check_arg)
+		return;
+	
 }
