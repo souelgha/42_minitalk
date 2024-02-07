@@ -1,43 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   recepteur_server.c                                 :+:      :+:    :+:   */
+/*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/31 11:22:10 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/07 11:15:56 by sonouelg         ###   ########.fr       */
+/*   Created: 2022/01/04 17:07:39 by prossi            #+#    #+#             */
+/*   Updated: 2024/02/07 17:27:53 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void receiptmsg(int signum, siginfo_t *info, void *content) 
+void	bit_handler(int signum)
 {
-	(void)content;
-	static char c = 0;
-	static int nbite = 0;
+	static unsigned char c = 0;
+	static int nbit = 0;
 
 	if (signum == SIGUSR1)
-		{
-			c = (c << 1) | 1;
-		}
+		c = (c << 1) | 1;
+	else
+		c = c << 1;
+	nbit++;
+	if (nbit == 8)
+	{
+		nbit = 0;
+		if(c == 0)
+			printf("\n");
 		else
-			c = c << 1;
-	nbite++;
-
+			printf("%c", c);	
+		c = 0;
+	}
+		
 }
 
-
-int main(void) 
+int	main(void)
 {
-
+	signal(SIGUSR2, bit_handler);
+	signal(SIGUSR1, bit_handler);
 	printf("server <PID> = <%d>\n", getpid());
     printf("server <%d> en attente du message.\n", getpid());
-	config_signal();
-    while (1) 
+	while (1)
 	{
-        pause();
-    }
-    return 0;
+		pause();
+	}
+	return (0);
 }
