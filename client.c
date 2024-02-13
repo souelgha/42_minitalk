@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/04 17:07:48 by prossi            #+#    #+#             */
-/*   Updated: 2024/02/07 17:31:53 by sonouelg         ###   ########.fr       */
+/*   Created: 2024/02/13 17:33:48 by sonouelg          #+#    #+#             */
+/*   Updated: 2024/02/13 17:43:45 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 void	send_bit(int pid, char *str, size_t len)
 {
-	static int sent = 0;
-	int		shift;
-	size_t	i;
+	static int	sent = 0;
+	int			shift;
+	size_t		i;
 
 	i = 0;
 	while (i <= len)
 	{
 		shift = 7;
-		while (shift >= 0 )
+		while (shift >= 0)
 		{
 			if ((str[i] >> shift) & 1)
 				kill(pid, SIGUSR1);
@@ -30,17 +30,19 @@ void	send_bit(int pid, char *str, size_t len)
 				kill(pid, SIGUSR2);
 			sent++;
 			shift--;
-			usleep(500);
+			usleep(400);
 		}
 		i++;
 	}
-	printf("sent=%d\n", sent);
+	ft_putnbr_fd(sent, 1);
 }
-void handler(int signum)
+
+void	handler(int signum)
 {
 	if (signum == SIGUSR1 || signum == SIGUSR2)
-		printf("signal recu!\n");
+		ft_putstr_fd("signal recu!\n", 1);
 }
+
 int	main(int argc, char **argv)
 {
 	int		pid;
@@ -50,10 +52,10 @@ int	main(int argc, char **argv)
 	{
 		signal(SIGUSR2, handler);
 		signal(SIGUSR1, handler);
-		pid = atoi(argv[1]);
+		pid = ft_atoi(argv[1]);
 		str = argv[2];
-		send_bit(pid, str, strlen(str));
+		send_bit(pid, str, ft_strlen(str));
 	}
 	else
-		printf("\nYOU EITHER LEFT IT BLANK OR ARE DOING MORE THAN 1 WORD\n\n");
+		ft_putstr_fd("\nMISSING STRING or WRONG <PID> FORMAT\n\n", 1);
 }

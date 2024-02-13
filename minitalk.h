@@ -6,21 +6,23 @@
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 09:43:12 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/02 09:43:28 by sonouelg         ###   ########.fr       */
+/*   Updated: 2024/02/13 17:37:39 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINITALK_H
 # define MINITALK_H
 
+# include <unistd.h>
+# include <sys/wait.h>
+# include <signal.h>
+# include <stdlib.h>
+# include <string.h>
 
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-
-
+int		ft_atoi(const char *str);
+void	ft_putnbr_fd(int n, int fd);
+void	ft_putstr_fd(char *s, int fd);
+void	ft_putchar_fd(char c, int fd);
+size_t	ft_strlen(const char *str);
 
 #endif

@@ -5,24 +5,23 @@ all : client server
 CC = cc
 CFLAGS = -Wall -Wextra -Werror 
 
-#EXE
-client : client.o
-	$(CC) -o $@ client.o
-	echo "\033[2J\033[H""\033[0;33m"client ok
-
-client.o : client.c minitalk.h
-	$(CC) $(CFLAGS) -c client.c
-
-server : server.o
-	$(CC) -o $@ server.o
-	echo "\033[0;33m"server ok
-
-server.o : server.c minitalk.h
-	$(CC) $(CFLAGS) -c server.c
 
 #SOURCES
 SRC =  	client.c\
-		server.c
+		server.c\
+		utils.c
+
+#EXE
+client : client.o utils.o
+	$(CC) -o $@ client.o utils.o
+	echo "\033[0;33m"client ok
+
+server : server.o utils.o
+	$(CC) -o $@ server.o utils.o
+	echo "\033[0;33m"server ok
+
+%.o: %.c minitalk.h
+	$(CC) $(CFLAGS) -o $@ -c $< 
 
 #CLEANS
 clean:
