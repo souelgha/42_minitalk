@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sonouelg <sonouelg@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/13 17:33:48 by sonouelg          #+#    #+#             */
-/*   Updated: 2024/02/14 10:30:41 by sonouelg         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:51:31 by sonouelg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
 
 void	send_bit(int pid, char *str, size_t len)
 {
@@ -36,8 +36,8 @@ void	send_bit(int pid, char *str, size_t len)
 
 void	handler(int signum)
 {
-	if (signum == SIGUSR1 || signum == SIGUSR2)
-		ft_putstr_fd("signal recu!\n", 1);
+	if (signum == SIGUSR2)
+		ft_putstr_fd("message recu!\n", 1);
 }
 
 int	main(int argc, char **argv)
