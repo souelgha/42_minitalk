@@ -15,5 +15,5 @@ start server
 ```
 start client 
 ```bash
-./client <PID> <string to send>
+./client <server PID> <string to send>
 ```
